@@ -16,7 +16,10 @@ Console.WriteLine("DSA Lab 0 - baseline\n");
 
 Player? player = collection.FindById(734);
 
-Console.WriteLine($"{collection.FindHighestScore()?.Name} has the highest score of all players\n");
+if (players.Count != 0)
+{
+    Console.WriteLine($"{collection.FindHighestScore()?.Name} has the highest score of all players\n");
+}
 
 if (player != null)
 {
