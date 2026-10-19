@@ -5,4 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="5.0.0" />
+  </ItemGroup>
 </Project>
