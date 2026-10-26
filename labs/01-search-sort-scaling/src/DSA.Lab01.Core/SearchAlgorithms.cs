@@ -6,6 +6,12 @@ namespace DSA.Lab01
     {
         public static int LinearSearch(int[] values, int target)
         {
+            //i represet the current index
+            //the method stops early if the arrays lenght is null aka the array does not exist
+            //the -1 is a check if they algorithm did not return any values
+            //best case is the first index is the target
+            //worst case is it returns -1 if there is no target in the array if there is a target in the array then worst would be the last index of the array
+            //the worst case scenario is equal to the index amount so O(n) which would mean that the amount of work would double
             if (values == null)
             {
                 throw new ArgumentNullException(nameof(values));
@@ -24,6 +30,7 @@ namespace DSA.Lab01
 
         public static int BinarySearch(int[] sortedValues, int target)
         {
+            //a binary serach needs sorted data because it takes the median and only searches the part that can have the target
             if (sortedValues == null)
             {
                 throw new ArgumentNullException(nameof(sortedValues));
