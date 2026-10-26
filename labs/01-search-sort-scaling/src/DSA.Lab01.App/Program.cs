@@ -56,5 +56,14 @@ static void RunBenchmark(int count)
     }
     sw.Stop();
     double jumpMicroseconds = sw.Elapsed.TotalMicroseconds / repetitions;
-    Console.WriteLine($"n={count,9:N0} | linear ~{linearMicroseconds,10:F2} us | binary ~{binaryMicroseconds,10:F2} us | jump {jumpMicroseconds,10:F2}");
+    
+    sw.Restart();
+    for (int i = 0; i < repetitions; ++i)
+    {
+        SortAlgorithms.InsertionSort(values);
+    }
+    sw.Stop();
+    double InsertionMicroseconds = sw.Elapsed.TotalMicroseconds / repetitions;
+    
+    Console.WriteLine($"n={count,9:N0} | linear ~{linearMicroseconds,10:F2} us | binary ~{binaryMicroseconds,10:F2} us | jump ~{jumpMicroseconds,10:F2} | InsertionSort ~{InsertionMicroseconds,10:F2}");
 }
