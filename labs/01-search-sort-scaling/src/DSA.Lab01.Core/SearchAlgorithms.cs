@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace DSA.Lab01
 {
@@ -57,6 +58,48 @@ namespace DSA.Lab01
                 {
                     high = middle - 1;
                 }
+            }
+
+            return -1;
+        }
+
+        public static int JumpSearch(int[] values, int target)
+        {
+            
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            
+            int n = values.Length;
+            int jumpLength = Convert.ToInt32(Math.Sqrt(n));
+            int previous = 0;
+
+            for (int minimumJump = Math.Min(jumpLength, n) - 1;
+                 values[minimumJump] < target;
+                 minimumJump = Math.Min(jumpLength, n) - 1)
+            {
+                previous = jumpLength;
+                jumpLength += (int)Math.Sqrt(n);
+                if (previous >= n)
+                {
+                    return -1;
+                }
+            }
+
+            while (values[previous] < n)
+            {
+                previous++;
+
+                if (previous == Math.Min(jumpLength, n))
+                {
+                    return -1;
+                }
+            }
+
+            if (values[previous] == target)
+            {
+                return previous;
             }
 
             return -1;

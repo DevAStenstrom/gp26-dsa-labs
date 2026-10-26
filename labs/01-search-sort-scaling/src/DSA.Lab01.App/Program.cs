@@ -48,5 +48,13 @@ static void RunBenchmark(int count)
     sw.Stop();
     double binaryMicroseconds = sw.Elapsed.TotalMicroseconds / repetitions;
 
-    Console.WriteLine($"n={count,9:N0} | linear ~{linearMicroseconds,10:F2} us | binary ~{binaryMicroseconds,10:F2} us");
+    
+    sw.Restart();
+    for (int i = 0; i < repetitions; ++i)
+    {
+        SearchAlgorithms.JumpSearch(values, missingTarget);
+    }
+    sw.Stop();
+    double jumpMicroseconds = sw.Elapsed.TotalMicroseconds / repetitions;
+    Console.WriteLine($"n={count,9:N0} | linear ~{linearMicroseconds,10:F2} us | binary ~{binaryMicroseconds,10:F2} us | jump {jumpMicroseconds,10:F2}");
 }
