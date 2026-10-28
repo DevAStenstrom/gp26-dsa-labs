@@ -53,7 +53,7 @@ namespace DSA.Lab02
         public T Pop()
         {
             // TODO: remove and return the logical top.
-            if (_items.Length == 0 | _count == 0)
+            if (_items.Length <= 0 | _count <= 0)
             {
                 throw new InvalidOperationException();
             }

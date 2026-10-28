@@ -50,5 +50,18 @@ namespace DSA.Lab02
 
             return obj;
         }
+
+        public void Clear()
+        {
+            if (_count == 0)
+            {
+                throw new InvalidOperationException();
+            }
+
+            for (int i = 0; i < _count; i++)
+            {
+                _items[i].Equals(default(T));
+            }
+        }
     }
 }
