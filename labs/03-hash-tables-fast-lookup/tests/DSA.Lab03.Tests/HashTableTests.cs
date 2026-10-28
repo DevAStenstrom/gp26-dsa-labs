@@ -62,5 +62,32 @@ namespace DSA.Lab03.Tests
             Assert.That(table.TryGetValue(6, out string? value), Is.True);
             Assert.That(value, Is.EqualTo("New"));
         }
+        
+        [Test]
+        public void HashTable_ReplacingValueWorksSeveralTimes()
+        {
+            var table = new IntHashTable<string>(1);
+
+            bool toggle = false;
+            for (int i = 0; i < 1000; i++)
+            {
+                if (toggle)
+                {
+                    table.Set(6, "Old");
+                    Assert.That(table.TryGetValue(6, out string? value), Is.True);
+                    Assert.That(value, Is.EqualTo("Old"));
+                    toggle = false;
+                }
+                else
+                {
+                    table.Set(6, "New");
+                    Assert.That(table.TryGetValue(6, out string? value), Is.True);
+                    Assert.That(value, Is.EqualTo("New"));
+                    toggle = true;
+                }
+            }
+            
+           
+        }
     }
 }

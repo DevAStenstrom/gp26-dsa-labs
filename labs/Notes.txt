@@ -1,0 +1,129 @@
+LAB03
+i asked AI for tips
+me- explain to me why 
+( 
+Entry<TValue> entry = new Entry<TValue>(key, value);  
+_buckets[_count].Append(entry);  
+_count++; 
+)
+does not work correctly dont give me the solution
+
+
+ai- _count is the number of entries stored, not the bucket that a key belongs in. So _buckets[_count] places each new entry in the next bucket by insertion order, regardless of its key. For example, with 5 buckets, key 7 belongs to the bucket determined by 7 % 5—but if it’s the first entry, this code puts it in bucket 0. A lookup that checks the key’s expected bucket won’t find it.
+There’s also a bounds issue: once _count reaches the number of buckets, _buckets[_count] is out of range, even though buckets can hold multiple entries. And because every call appends, setting a key that already exists creates a duplicate rather than replacing its value.
+
+me- could you give me tips to help me solve it
+
+ai- Think of Set as two steps: choose the bucket from the key, then search within that bucket.
+•Use the supplied GetBucketIndex(key) rather than _count to select a bucket.
+•In that bucket, check whether an entry with the same key already exists. If so, replace its value; otherwise, add a new entry and increase Count.
+•For TryGetValue, search only the key’s bucket. Return true and the stored value when found; otherwise return false and the default value.
+•ContainsKey should report whether that same bucket contains the key. Consider reusing your lookup logic to avoid duplicating it.
+Try tracing keys 1 and 6 with five buckets: they collide, so the bucket list must still distinguish them by their keys. The README’s collision tests and the “replacing an existing value” example are good checks for your implementation.
+
+me- is this correct dont give me the answer just give me tips if im worng
+
+ai- Not quite. Two parts of Set need another look:
+•Count changes on every call. Updating an existing key shouldn’t increase the number of stored keys. Try calling Set twice with the same key and check Count.
+•The replacement assumes a particular list position. A matching entry could be at a different index, and a one-entry bucket may not even have the index you’re assigning to. Think about how to update the entry you actually found.
+A useful test: insert two keys that collide, then update the first one. Check that both values are still retrievable and Count hasn’t increased.
+
+me- what would be a better solution?
+
+ai- For Set, search the selected bucket and replace the entry at the position where you find the matching key. Increase Count only when adding a new key:
+public void Set(int key, TValue value)
+{
+    int bucketIndex = GetBucketIndex(key);
+    List<Entry<TValue>> bucket = _buckets[bucketIndex];
+
+    for (int i = 0; i < bucket.Count; i++)
+    {
+        if (bucket[i].Key == key)
+        {
+            bucket[i] = new Entry<TValue>(key, value);
+            return;
+        }
+    }
+
+    bucket.Add(new Entry<TValue>(key, value));
+    _count++;
+}
+Because Entry<TValue> is a readonly struct, replacing the list element is appropriate; you can’t change its Value property in place.
+
+me- what is wrong here dont give me the answer just tips
+
+ai- Set looks much closer. The problems are in TryGetValue:
+•You index _buckets with the raw key before using the bucket function. Try a key larger than the number of buckets.
+•The recursive call passes a bucket entry where the method expects a key, and the later call with key would call TryGetValue again with the same arguments—what would stop that recursion?
+•When you find the matching entry, think about which property contains the value the caller requested.
+•Also decide what the out parameter should be when the key isn’t found, and make sure the method returns false in that case.
+A useful test case is a table with five buckets and key 7.
+
+me- explain like im 5
+
+ai-Imagine you have **5 boxes** for storing things. A key tells you which box to use—but it doesn’t always match the box number. For example, key **7** belongs in box **2** (because 7 wraps around to 2).
+
+When looking for something, first choose its box, then check inside for the matching key. If you find it, give back its value. If you don’t, say “not found.” Don’t ask the same lookup question again from inside itself—that would be like searching forever.
+
+me- from now on always give me tips unless i explicitly ask for an answer, why does line 59 not work?
+
+ai- TValue is a placeholder for any type, so the compiler can’t assume it has a constructor that accepts -1. Think about what value your method should provide when no matching key is found, without assuming what type TValue is.
+
+me- does this work?
+
+ai- Not yet. A few things to check:
+
+- You’re searching **every bucket**, even though the key tells you which one to check.
+- `bucket[key]` uses `key` as a **position in the list**. A key is not necessarily the entry’s position; try looking up key `7` in a five-bucket table.
+- `value != null` doesn’t reliably tell you whether the key was found. A stored value can be `null`, and `TValue` can also be a value type. Track whether you found a matching entry instead.
+- When you find the entry, consider using the position where you found it to retrieve its value.
+
+me- okay give me the answer
+
+ai- Use the key to select its bucket, then search that bucket for the matching entry:
+public bool TryGetValue(int key, out TValue value)
+{
+    int bucketIndex = GetBucketIndex(key);
+    List<Entry<TValue>> bucket = _buckets[bucketIndex];
+
+    foreach (Entry<TValue> entry in bucket)
+    {
+        if (entry.Key == key)
+        {
+            value = entry.Value;
+            return true;
+        }
+    }
+
+    value = default!;
+    return false;
+}
+The bool indicates whether the key was found, so it works even when a stored value is null.
+
+me- what does line 62 do?
+
+Line 62 runs if the loop didn’t find the key. It assigns the default value for `TValue` to the `out` parameter, so the method can return `false` without leaving `value` unassigned.
+
+The `!` is C#’s null-forgiving operator: it tells the compiler not to warn that `default` might be null. It doesn’t change the value at runtime.
+
+me- would this be optimal?
+
+ai- It’s a good fit for a **linear map**: it scans the list, updates an existing key, or adds a new one. But lookups and updates take **O(n)** time in the worst case, so it isn’t optimal if fast lookup is your goal.
+
+A helpful distinction: is this class meant to be the simple baseline for comparison, or the fastest map for real use? For the lab’s baseline, keeping it simple is probably the point.
+
+me- why does this test fail?
+```c#
+[Test]
+public void HashTable_CanFindStoredValue()
+{
+    var table = new IntHashTable<string>(5);
+    table.Set(734, "North Gate");
+    Assert.That(table.TryGetValue(734, out string? value), Is.True);
+    Assert.That(value, Is.EqualTo("North Gate"));
+}
+```
+
+ai- The problem is in `Set`: with a new table, `ContainsKey(734)` is `false`, so the early `return` runs and the entry never gets added. Then `TryGetValue` correctly reports that the key isn’t there.
+
+Tip: trace the `if` condition for a **new key** versus an **existing key**. Which case should continue to the add logic, and which should reach the replacement logic?
