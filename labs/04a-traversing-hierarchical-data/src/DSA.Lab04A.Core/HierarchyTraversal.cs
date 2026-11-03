@@ -20,7 +20,6 @@ namespace DSA.Lab04A
             }
             
             int count = 1;
-
             foreach (HierarchyNode<T> child in root.Children)
             {
                 count += CountNodes(child);

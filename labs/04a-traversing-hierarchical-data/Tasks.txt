@@ -1,0 +1,42 @@
+Task1
+the root = Survival which is the top node
+one parent = Movement which is directly above Dash & Climb
+one child = Dash which is directly below Movement
+all leaves = Dash,Climb,Sword,Bow which has no children
+the subtree rooted at Movement = Movement = root & parent of Dash & Climb. Dash & Climb = Children of Movement & is leaves
+the depth of Dash = Suvival,Movement,Dash = 2 edges
+
+Task7
+--What work happens at the current node?
+CountNodes
+every node = sets count to 1, iterates through each child and calls the method again with the child and adds the return to the count returns the count
+
+Contains
+every node = initializes contains to false, iterate through each child,if the child.Value is the target we are looking for then set contains to true & break and return the contains, otherwise call the Contains method again with the child,target arguments if contains was never set to true then return false
+
+DepthFirstPreOrder
+every node = make a result list and add the node to the list,iterates through each child if the child is a leaf then add it to the list, otherwise make a new list with the recursive method with the child as an argument & add the Childs to the result list
+finally returns the result list
+
+MaxDepth
+every node = initalizes maxdepth to 0 iterates through each child in the node,sets depth to 1+recursive method with child argument,if the depth is larger than maxdepth then set maxdepth to depth,finally return maxdepth
+
+--What smaller version of the same problem is delegated to each child?
+mentioned in --What work happens at the current node?
+
+--What stops the recursion?
+CountNodes
+the child count
+Contains
+the if statement breaks
+DepthFirstPreOrder
+the child count
+MaxDepth
+the child count
+
+What result is returned or accumulated?
+mentioned in --What work happens at the current node?
+
+TASK8
+added  MaxDepth_UsesDeepestBranchOfAllChild()
+which makes sure that it looks through each Childs deepest root by making the root-children0-children1-children0 the deepest instead of root-children0-children0 the deepest so it wont just go through the deepest in children0 which was assumed in MaxDepth_UsesDeepestBranch()
