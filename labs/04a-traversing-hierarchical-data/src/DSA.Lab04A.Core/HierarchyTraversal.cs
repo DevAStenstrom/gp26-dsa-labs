@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace DSA.Lab04A
 {
@@ -17,9 +18,15 @@ namespace DSA.Lab04A
             {
                 throw new ArgumentNullException(nameof(root));
             }
+            
+            int count = 1;
 
-            // TODO: count this node, then count every child subtree.
-            throw new NotImplementedException();
+            foreach (HierarchyNode<T> child in root.Children)
+            {
+                count += CountNodes(child);
+            }
+            return count;
+            
         }
 
         public static bool Contains<T>(HierarchyNode<T> root, T target)
@@ -28,9 +35,20 @@ namespace DSA.Lab04A
             {
                 throw new ArgumentNullException(nameof(root));
             }
-
-            // TODO: compare the current node, then search child subtrees.
-            throw new NotImplementedException();
+            
+            bool contains = false;
+            
+            foreach (HierarchyNode<T> child in root.Children)
+            {
+                if (child.Value.Equals(target))
+                {
+                    contains = true;
+                    break;
+                }
+                contains = Contains<T>(child, target);
+            }
+            
+            return contains;
         }
 
         public static IReadOnlyList<T> DepthFirstPreOrder<T>(HierarchyNode<T> root)
@@ -39,10 +57,22 @@ namespace DSA.Lab04A
             {
                 throw new ArgumentNullException(nameof(root));
             }
-
-            // TODO: return values in pre-order:
-            // current node first, then each child subtree from left to right.
-            throw new NotImplementedException();
+            List<T> result = new List<T>();
+            result.Add(root.Value);
+            foreach (var child in root.Children)
+            {
+                if (child.IsLeaf == true)
+                {
+                    result.Add(child.Value);
+                }
+                else
+                {
+                    IReadOnlyList<T> childresult = DepthFirstPreOrder<T>(child);
+                    result.AddRange(childresult);
+                }
+                
+            }
+            return result;
         }
 
         public static int MaxDepth<T>(HierarchyNode<T> root)
@@ -52,9 +82,17 @@ namespace DSA.Lab04A
                 throw new ArgumentNullException(nameof(root));
             }
 
-            // Depth is measured in edges from the root.
-            // A single-node tree therefore has max depth 0.
-            throw new NotImplementedException();
+            int maxdepth = 0;
+            foreach (var child in root.Children)
+            {
+                int depth = 1 + MaxDepth<T>(child);
+                if (depth > maxdepth)
+                {
+                    maxdepth = depth;
+                }
+            }
+
+            return maxdepth;
         }
     }
 }

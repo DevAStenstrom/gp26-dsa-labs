@@ -97,6 +97,19 @@ namespace DSA.Lab04A.Tests
 
             Assert.That(HierarchyTraversal.MaxDepth(root), Is.EqualTo(3));
         }
+        
+        [Test]
+        public void MaxDepth_UsesDeepestBranchOfAllChild()
+        {
+            HierarchyNode<string> root = BuildExample();
+            HierarchyNode<string> deep = root.Children[0].Children[0];
+            deep.AddChild("Air Dash");
+
+            HierarchyNode<string> deep2 = root.Children[0].Children[1];
+            deep2.AddChild("Air Dash");
+            deep2.Children[0].AddChild("Air Movement");
+            Assert.That(HierarchyTraversal.MaxDepth(root), Is.EqualTo(4));
+        }
 
         private static HierarchyNode<string> BuildExample()
         {
