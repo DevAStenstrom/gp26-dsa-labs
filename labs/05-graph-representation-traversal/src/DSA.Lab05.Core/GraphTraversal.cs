@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace DSA.Lab05
 {
@@ -12,24 +14,37 @@ namespace DSA.Lab05
     /// </summary>
     public static class GraphTraversal
     {
-        public static IReadOnlyList<string> BreadthFirstOrder(
-            AdjacencyGraph graph,
-            string start)
+        public static IReadOnlyList<string> BreadthFirstOrder(AdjacencyGraph graph, string start)
         {
-            throw new NotImplementedException();
+            Queue<string> frontier = new Queue<string>();
+            HashSet<string> visited = new HashSet<string>();
+            frontier.Enqueue(start);
+
+            while (frontier.Count > 0)
+            {
+                string current = frontier.Dequeue();
+                visited.Add(current);
+                var neighbors = graph.GetNeighbors(current);
+                foreach (var neighbor in neighbors)
+                {
+                    if (visited.Add(neighbor))
+                    {
+                        frontier.Enqueue(neighbor);
+                    }
+                }
+            }
+            return visited.ToList();
         }
 
-        public static IReadOnlyList<string> DepthFirstOrder(
-            AdjacencyGraph graph,
-            string start)
+        public static IReadOnlyList<string> DepthFirstOrder(AdjacencyGraph graph, string start)
         {
-            throw new NotImplementedException();
+            Queue<string> frontier = new Queue<string>();
+            HashSet<string> visited = new HashSet<string>();
+
+            return visited.ToList();
         }
 
-        public static bool IsReachableBfs(
-            AdjacencyGraph graph,
-            string start,
-            string target)
+        public static bool IsReachableBfs(AdjacencyGraph graph, string start, string target)
         {
             throw new NotImplementedException();
         }

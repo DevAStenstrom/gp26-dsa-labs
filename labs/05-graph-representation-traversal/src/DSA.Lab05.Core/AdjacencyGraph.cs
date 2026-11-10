@@ -45,6 +45,7 @@ namespace DSA.Lab05
 
                 // TODO:
                 // Add edge.To to the adjacency list belonging to edge.From.
+                _neighborsByNode[edge.From].Add(edge.To);
             }
         }
 
