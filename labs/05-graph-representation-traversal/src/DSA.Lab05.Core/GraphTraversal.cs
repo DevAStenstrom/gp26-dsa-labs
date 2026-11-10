@@ -38,15 +38,66 @@ namespace DSA.Lab05
 
         public static IReadOnlyList<string> DepthFirstOrder(AdjacencyGraph graph, string start)
         {
-            Queue<string> frontier = new Queue<string>();
-            HashSet<string> visited = new HashSet<string>();
+            var frontier = new Stack<string>();
+            var visited = new HashSet<string>();
+            var order = new List<string>();
 
-            return visited.ToList();
+            frontier.Push(start);
+
+            while (frontier.Count > 0)
+            {
+                string current = frontier.Pop();
+                if (!visited.Add(current))
+                {
+                    continue; 
+                }
+                
+                order.Add(current);
+
+                var neighbors = graph.GetNeighbors(current);
+                for (int i = neighbors.Count - 1; i >= 0; i--)
+                {
+                    if (!visited.Contains(neighbors[i]))
+                    {
+                        frontier.Push(neighbors[i]); 
+                    }
+                }
+            }
+
+            return order;
         }
 
         public static bool IsReachableBfs(AdjacencyGraph graph, string start, string target)
         {
-            throw new NotImplementedException();
+            if (start == target)
+            {
+                return true;
+            }
+
+            Queue<string> frontier = new Queue<string>();
+            HashSet<string> visited = new HashSet<string>();
+            frontier.Enqueue(start);
+
+            while (frontier.Count > 0)
+            {
+                string current = frontier.Dequeue();
+                visited.Add(current);
+                var neighbors = graph.GetNeighbors(current);
+                foreach (var neighbor in neighbors)
+                {
+                    if (neighbor == target)
+                    {
+                        return true;
+                    }
+                    
+                    if (visited.Add(neighbor))
+                    {
+                        frontier.Enqueue(neighbor);
+                    }
+                }
+            }
+            
+            return false;
         }
     }
 }
