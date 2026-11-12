@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DSA.Lab06
 {
@@ -28,9 +29,30 @@ namespace DSA.Lab06
 
             bestCost[start] = 0;
             frontier.Enqueue(start, 0);
-
+            
             int expandedNodes = 0;
 
+            while (frontier.Count > 0)
+            {
+                var node = frontier.Dequeue();
+                foreach (WeightedEdge path in graph.GetOutgoing(node.Value))
+                {
+                    //gets child of path and enqueues next node
+                    frontier.Enqueue(graph.GetNode(path.To).Id, expandedNodes++);
+                    int edgeCost = path.Cost;
+                    if (!cameFrom.ContainsKey(path.To))
+                    {
+                        cameFrom[path.To] = node.Value;
+                    }
+                    
+                    bestCost[path.To]  = edgeCost;
+
+                    return RouteResult.Success(new List<string>(), edgeCost, 0);
+                }
+            }
+            
+            
+            
             // TODO Lab 6A:
             // 1. Repeatedly remove the smallest-priority frontier candidate.
             // 2. Ignore stale entries when a cheaper cost is already known.
